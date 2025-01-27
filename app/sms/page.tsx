@@ -10,18 +10,20 @@ export default function SMSLogin() {
       </div>
       <form className="flex flex-col gap-3">
         <FormInput
+          name="phone"
           type="number"
           placeholder="휴대폰 번호"
           required={true}
           errors={[]}
         />
         <FormInput
+          name="code"
           type="number"
           placeholder="전송 코드"
           required={true}
           errors={[]}
         />
-        <FormBtn text="인증하기" loading={false} />
+        <FormBtn text="인증하기" />
       </form>
     </div>
   );
