@@ -5,6 +5,7 @@ import SocialLogin from "@/components/social-login";
 import Input from "@/components/input";
 import { createAccount } from "./actions";
 import { useActionState } from "react";
+import { PASSWORD_MIN_LENGTH } from "@/lib/constants";
 
 export default function CreateAccount() {
   const [state, formAction] = useActionState(createAccount, null);
@@ -21,8 +22,6 @@ export default function CreateAccount() {
           placeholder="유저이름"
           required={true}
           errors={state?.fieldErrors?.username}
-          minLength={3}
-          maxLength={10}
         />
         <Input
           name="email"
@@ -37,7 +36,7 @@ export default function CreateAccount() {
           placeholder="비밀번호"
           required={true}
           errors={state?.fieldErrors?.password}
-          minLength={4}
+          minLength={PASSWORD_MIN_LENGTH}
         />
         <Input
           name="confirmPassword"
@@ -45,7 +44,7 @@ export default function CreateAccount() {
           placeholder="비밀번호 확인"
           required={true}
           errors={state?.fieldErrors?.confirmPassword}
-          minLength={4}
+          minLength={PASSWORD_MIN_LENGTH}
         />
         <Button text="계정 생성하기" />
       </form>

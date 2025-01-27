@@ -7,3 +7,4 @@
 - TypeScript
 - React Server Action
 - Zod
+- validator.js
