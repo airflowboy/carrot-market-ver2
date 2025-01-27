@@ -2,11 +2,11 @@
 
 import { useFormStatus } from "react-dom";
 
-interface FormBtnProps {
+interface ButtonProps {
   text: string;
 }
 
-export default function FormBtn({ text }: FormBtnProps) {
+export default function Button({ text }: ButtonProps) {
   // 폼 상태를 확인 (ex) 로딩중인지 )
   // 폼 상태를 확인하여 변화를 줄 컴포넌트에서 사용해야됨.
   // Form의 자식컴포넌트에서 사용

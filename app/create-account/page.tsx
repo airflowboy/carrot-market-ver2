@@ -1,40 +1,53 @@
-import FormBtn from "@/components/form-btn";
-import FormInput from "@/components/form-input";
+"use client";
+
+import Button from "@/components/button";
 import SocialLogin from "@/components/social-login";
+import Input from "@/components/input";
+import { createAccount } from "./actions";
+import { useActionState } from "react";
 
 export default function CreateAccount() {
+  const [state, formAction] = useActionState(createAccount, null);
   return (
     <div className="flex flex-col gap-10 py-8 px-6">
       <div className="flex flex-col gap-2 *:font-medium">
         <h1 className="text-2xl">안녕하세요!</h1>
         <h2 className="text-xl">가입을 위해 내용을 채워주세요</h2>
       </div>
-      <form className="flex flex-col gap-3">
-        <FormInput
+      <form action={formAction} className="flex flex-col gap-3">
+        <Input
+          name="username"
           type="text"
           placeholder="유저이름"
           required={true}
-          errors={[]}
+          errors={state?.fieldErrors?.username}
+          minLength={3}
+          maxLength={10}
         />
-        <FormInput
+        <Input
+          name="email"
           type="email"
           placeholder="이메일"
           required={true}
-          errors={[]}
+          errors={state?.fieldErrors?.email}
         />
-        <FormInput
+        <Input
+          name="password"
           type="password"
           placeholder="비밀번호"
           required={true}
-          errors={[]}
+          errors={state?.fieldErrors?.password}
+          minLength={4}
         />
-        <FormInput
+        <Input
+          name="confirmPassword"
           type="password"
           placeholder="비밀번호 확인"
           required={true}
-          errors={[]}
+          errors={state?.fieldErrors?.confirmPassword}
+          minLength={4}
         />
-        <FormBtn text="계정 생성하기" loading={false} />
+        <Button text="계정 생성하기" />
       </form>
       <SocialLogin />
     </div>

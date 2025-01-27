@@ -1,7 +1,7 @@
 "use client";
 
-import FormBtn from "@/components/form-btn";
-import FormInput from "@/components/form-input";
+import Button from "@/components/button";
+import Input from "@/components/input";
 import SocialLogin from "@/components/social-login";
 import { handleForm } from "./actions";
 import { useActionState } from "react";
@@ -17,21 +17,14 @@ export default function Login() {
         <h2 className="text-xl">이메일과 비밀번호를 입력해주세요</h2>
       </div>
       <form action={formAction} className="flex flex-col gap-3">
-        <FormInput
-          name="email"
-          type="email"
-          placeholder="이메일"
-          required={true}
-          errors={[]}
-        />
-        <FormInput
+        <Input name="email" type="email" placeholder="이메일" required={true} />
+        <Input
           name="password"
           type="password"
           placeholder="비밀번호"
           required={true}
-          errors={state?.errors ?? []}
         />
-        <FormBtn text="로그인" />
+        <Button text="로그인" />
       </form>
       <SocialLogin />
     </div>
