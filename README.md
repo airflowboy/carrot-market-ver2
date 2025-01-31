@@ -8,3 +8,6 @@
 - React Server Action
 - Zod
 - validator.js
+- prisma, prisma studio
+- bcrypt (npm i bcrypt, npm i @types/bcrypt)
+- iron session (npm i iron-session)

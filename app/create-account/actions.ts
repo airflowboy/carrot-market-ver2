@@ -1,22 +1,49 @@
 "use server";
 
+import bcrypt from "bcrypt";
 import {
   PASSWORD_MIN_LENGTH,
   PASSWORD_REGEX,
   PASSWORD_REGEX_ERROR_MESSAGE,
 } from "@/lib/constants";
+import db from "@/lib/db";
 // zod를 사용하여 formData를 검증
 import { z } from "zod";
-
-const checkUsername = (username: string) => {
-  return !username.includes("potato");
-};
+import { getIronSession } from "iron-session";
+import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
 
 const checkPasswordIsEqualConfirmPassword = (
   password: string,
   confirmPassword: string
 ) => {
   return password === confirmPassword;
+};
+
+const checkUniqueUsername = async (username: string) => {
+  const user = await db.user.findUnique({
+    where: {
+      username,
+    },
+    select: {
+      id: true,
+    },
+  });
+
+  return !Boolean(user);
+};
+
+const checkUniqueEmail = async (email: string) => {
+  const user = await db.user.findUnique({
+    where: {
+      email,
+    },
+    select: {
+      id: true,
+    },
+  });
+
+  return !Boolean(user);
 };
 
 // formData를 검증할 스키마
@@ -32,8 +59,16 @@ const formSchema = z
       .string()
       .toLowerCase()
       .trim()
-      .refine((username) => checkUsername(username), "No patato"),
-    email: z.string().email().toLowerCase().trim(),
+      .refine(
+        (username) => checkUniqueUsername(username),
+        "This username is already taken"
+      ),
+    email: z
+      .string()
+      .email()
+      .toLowerCase()
+      .trim()
+      .refine(checkUniqueEmail, "This email is already taken"),
     password: z
       .string()
       .min(PASSWORD_MIN_LENGTH)
@@ -59,10 +94,30 @@ export async function createAccount(prevState: any, formData: FormData) {
   };
 
   // 검증 후 결과를 return
-  const result = formSchema.safeParse(data);
+  const result = await formSchema.safeParseAsync(data);
   if (!result.success) {
     return result.error.flatten();
   } else {
-    console.log(result.data);
+    const hashedPassword = await bcrypt.hash(result.data.password, 12);
+    const user = await db.user.create({
+      data: {
+        username: result.data.username,
+        email: result.data.email,
+        password: hashedPassword,
+      },
+      select: {
+        id: true,
+      },
+    });
+
+    const session = await getIronSession(await cookies(), {
+      cookieName: "session",
+      password: process.env.IRON_SESSION_PASSWORD!,
+    });
+    // @ts-expect-error
+    session.id = user.id;
+    await session.save();
+
+    redirect("/profile");
   }
 }
